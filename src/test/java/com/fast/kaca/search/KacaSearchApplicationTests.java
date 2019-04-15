@@ -1,7 +1,7 @@
 package com.fast.kaca.search;
 
-import com.fast.kaca.search.core.service.SearchService;
-import com.fast.kaca.search.core.utils.WordUtils;
+import com.fast.kaca.search.web.service.SearchService;
+import com.fast.kaca.search.web.utils.WordUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;

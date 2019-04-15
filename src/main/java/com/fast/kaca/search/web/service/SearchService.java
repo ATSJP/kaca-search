@@ -1,9 +1,9 @@
-package com.fast.kaca.search.core.service;
+package com.fast.kaca.search.web.service;
 
-import com.fast.kaca.search.core.config.Config;
-import com.fast.kaca.search.core.utils.FileUtils;
-import com.fast.kaca.search.core.utils.IoUtils;
-import com.fast.kaca.search.core.utils.WordUtils;
+import com.fast.kaca.search.web.config.Config;
+import com.fast.kaca.search.web.utils.FileUtils;
+import com.fast.kaca.search.web.utils.IoUtils;
+import com.fast.kaca.search.web.utils.WordUtils;
 import com.google.common.base.Splitter;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;

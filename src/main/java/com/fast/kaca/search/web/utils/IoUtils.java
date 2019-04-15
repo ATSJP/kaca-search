@@ -1,4 +1,4 @@
-package com.fast.kaca.search.core.utils;
+package com.fast.kaca.search.web.utils;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;

@@ -1,4 +1,4 @@
-package com.fast.kaca.search.core.utils;
+package com.fast.kaca.search.web.utils;
 
 import com.google.common.base.CharMatcher;
 import com.google.common.collect.Lists;

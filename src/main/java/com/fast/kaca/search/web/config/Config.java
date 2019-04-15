@@ -1,10 +1,10 @@
-package com.fast.kaca.search.core.config;
+package com.fast.kaca.search.web.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 /**
- * @author sjp
+ * @author sys
  * @date 2019/4/15
  **/
 @Component
