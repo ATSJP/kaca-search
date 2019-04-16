@@ -34,7 +34,7 @@ public class SearchController {
     @RequestMapping(value = "/createIndex", method = RequestMethod.GET)
     public SearchResponse createIndex(SearchRequest request) {
         SearchResponse response = new SearchResponse();
-        searchService.createIndex();
+        searchService.initIndexTask();
         return response;
     }
 }

@@ -5,6 +5,7 @@ import com.fast.kaca.search.web.utils.FileUtils;
 import com.fast.kaca.search.web.utils.IoUtils;
 import com.fast.kaca.search.web.utils.WordUtils;
 import com.google.common.base.Splitter;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -16,6 +17,7 @@ import org.springframework.util.CollectionUtils;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.*;
 
 /**
  * @author sys
@@ -28,6 +30,15 @@ public class SearchService {
 
     @Resource
     private Config config;
+
+    public void initIndexTask() {
+        // 单线程去跑数据
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("initUserEventWhenFinish-pool-%d")
+                .build();
+        ExecutorService singleThreadExecutor = new ThreadPoolExecutor(1, 1, 0L, TimeUnit.MILLISECONDS,
+                new LinkedBlockingQueue<>(), namedThreadFactory);
+        singleThreadExecutor.execute(this::createIndex);
+    }
 
     /**
      * 生成索引
