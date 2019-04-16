@@ -1,7 +1,7 @@
 package com.fast.kaca.search.web.constant;
 
 /**
- * @author sjp
+ * @author sys
  * @date 2019/4/16
  **/
 public interface ConstantCache {

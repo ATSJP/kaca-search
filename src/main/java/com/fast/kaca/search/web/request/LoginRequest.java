@@ -5,7 +5,7 @@ import org.hibernate.validator.constraints.Length;
 import javax.validation.constraints.NotBlank;
 
 /**
- * @author sjp
+ * @author sys
  * @date 2019/4/16
  **/
 public class LoginRequest extends BaseRequest {

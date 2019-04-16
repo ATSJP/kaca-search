@@ -5,7 +5,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 /**
  * Token生成器
  *
- * @author sjp
+ * @author sys
  * @date 2019/2/25
  **/
 public class TokenGenerate {

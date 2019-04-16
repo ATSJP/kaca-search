@@ -5,7 +5,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * @author sjp
+ * @author sys
  * @date 2019/4/16
  **/
 @Repository

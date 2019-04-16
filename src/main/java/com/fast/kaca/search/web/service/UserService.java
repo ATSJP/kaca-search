@@ -8,19 +8,18 @@ import com.fast.kaca.search.web.request.LoginRequest;
 import com.fast.kaca.search.web.response.LoginResponse;
 import com.fast.kaca.search.web.utils.RedissonTools;
 import com.fast.kaca.search.web.utils.TokenGenerate;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 
 /**
- * @author sjp
+ * @author sys
  * @date 2019/4/16
  **/
 @Service
 public class UserService {
 
-    @Autowired
+    @Resource
     private UserDao userDao;
     @Resource
     private RedissonTools redissonTools;
