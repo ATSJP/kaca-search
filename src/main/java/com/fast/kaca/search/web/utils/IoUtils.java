@@ -47,7 +47,6 @@ public class IoUtils {
         IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, ANALYZER);
         //传入目录和分词器
         IndexWriter indexWriter = new IndexWriter(directory, config);
-        indexWriter.commit();
         //写入到目录文件中
         indexWriter.addDocuments(docs);
         //提交事务
