@@ -31,13 +31,17 @@ public class ApiAuthInterceptor implements HandlerInterceptor {
         String uid = request.getParameter("uid");
         String token = request.getParameter("token");
         if (StringUtils.isEmpty(uid) || StringUtils.isEmpty(token)) {
+            BaseResponse baseResponse = new BaseResponse();
+            baseResponse.setCode(ConstantApi.CODE.ILLEGAL_REQUEST.getCode());
+            baseResponse.setMsg(ConstantApi.CODE.ILLEGAL_REQUEST.getDesc());
+            response.getWriter().write(JSONObject.toJSONString(baseResponse));
             return false;
         }
         String token1 = redissonTools.get("token-" + uid);
         if (!token.equals(token1)) {
             BaseResponse baseResponse = new BaseResponse();
-            baseResponse.setCode(ConstantApi.TOKEN_STATUS.NOT_EFFECT.getCode());
-            baseResponse.setMsg(ConstantApi.TOKEN_STATUS.NOT_EFFECT.getDesc());
+            baseResponse.setCode(ConstantApi.CODE.TOKEN_INVALID.getCode());
+            baseResponse.setMsg(ConstantApi.CODE.TOKEN_INVALID.getDesc());
             response.getWriter().write(JSONObject.toJSONString(baseResponse));
             return false;
         }

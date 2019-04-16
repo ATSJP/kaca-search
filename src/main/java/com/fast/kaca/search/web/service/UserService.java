@@ -29,12 +29,12 @@ public class UserService {
         String password = request.getPassword();
         UserEntity userEntity = userDao.findByUserName(userName);
         if (userEntity == null) {
-            response.setCode(ConstantApi.LOGIN_MESSAGE.ERROR.getCode());
+            response.setCode(ConstantApi.CODE.FAIL.getCode());
             response.setMsg(ConstantApi.LOGIN_MESSAGE.ERROR.getDesc());
             return;
         }
         if (!password.equals(userEntity.getPassword())) {
-            response.setCode(ConstantApi.LOGIN_MESSAGE.ERROR.getCode());
+            response.setCode(ConstantApi.CODE.FAIL.getCode());
             response.setMsg(ConstantApi.LOGIN_MESSAGE.ERROR.getDesc());
             return;
         }
@@ -43,7 +43,7 @@ public class UserService {
         redissonTools.set("token-" + userEntity.getId(), token, ConstantCache.LOGIN_TOKEN_TIME_OUT);
         response.setUid(userEntity.getId());
         response.setToken(token);
-        response.setCode(ConstantApi.LOGIN_MESSAGE.SUCCESS.getCode());
+        response.setCode(ConstantApi.CODE.SUCCESS.getCode());
         response.setMsg(ConstantApi.LOGIN_MESSAGE.SUCCESS.getDesc());
     }
 

@@ -13,6 +13,7 @@ import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collection;
 
 /**
  * @author sys
@@ -37,9 +38,9 @@ public class IoUtils {
     /**
      * 封裝一个方法，用于将数据库中的数据解析为一个个关键字词存储到索引文件中
      *
-     * @param doc doc
+     * @param docs docs
      */
-    public static void write(Document doc, String path) throws IOException {
+    public static void write(Collection<Document> docs, String path) throws IOException {
         //索引库的存储目录
         Directory directory = FSDirectory.open(new File(path));
         //关联当前lucene版本和分值器
@@ -48,7 +49,7 @@ public class IoUtils {
         IndexWriter indexWriter = new IndexWriter(directory, config);
         indexWriter.commit();
         //写入到目录文件中
-        indexWriter.addDocument(doc);
+        indexWriter.addDocuments(docs);
         //提交事务
         indexWriter.commit();
         //关闭流

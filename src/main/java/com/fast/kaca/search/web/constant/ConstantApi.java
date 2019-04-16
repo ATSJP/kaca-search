@@ -8,10 +8,15 @@ public interface ConstantApi {
 
     enum CODE {
         /**
-         * 返回状态
+         * 系统错误code
          */
-        SUCCESS(0, "success"),
-        ERROR(1, "error");
+        SUCCESS(0, "成功"),
+        FAIL(1, "失败"),
+        SYSTEM_ERROR(2, "系统错误"),
+        ILLEGAL_REQUEST(3, "非法请求"),
+        TOKEN_INVALID(4, "token失效,请重新登陆"),
+        SELF_1(5, "自定义错误1"),
+        SELF_2(6, "自定义错误2");
 
         private int code;
         private String desc;
@@ -30,46 +35,17 @@ public interface ConstantApi {
         }
     }
 
-    enum TOKEN_STATUS {
-        /**
-         * 返回token状态
-         */
-        NOT_EFFECT(1, "token失效,请重新登陆");
-
-        private int code;
-        private String desc;
-
-        TOKEN_STATUS(int code, String desc) {
-            this.code = code;
-            this.desc = desc;
-        }
-
-        public int getCode() {
-            return code;
-        }
-
-        public String getDesc() {
-            return desc;
-        }
-    }
-
     enum LOGIN_MESSAGE {
         /**
          * 返回状态及自定义信息
          */
-        SUCCESS(0, "登陆成功"),
-        ERROR(1, "登陆失败，请确认您的用户名或者密码");
+        SUCCESS("登陆成功"),
+        ERROR("登陆失败，请确认您的用户名或者密码");
 
-        private int code;
         private String desc;
 
-        LOGIN_MESSAGE(int code, String desc) {
-            this.code = code;
+        LOGIN_MESSAGE(String desc) {
             this.desc = desc;
-        }
-
-        public int getCode() {
-            return code;
         }
 
         public String getDesc() {

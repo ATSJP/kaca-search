@@ -23,15 +23,29 @@ public class SearchController {
     @Resource
     private SearchService searchService;
 
-    @ApiOperation(value = "上传文件", notes = "上传文件1")
+    @ApiOperation(value = "测试搜索", notes = "测试搜索")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
             @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "key", value = "上传文件内容", required = true, dataType = "String")
+            @ApiImplicitParam(name = "key", value = "搜索关键词", required = true, dataType = "String")
+    })
+    @RequestMapping(method = RequestMethod.GET)
+    public SearchResponse search(@Valid SearchRequest request) throws Exception {
+        SearchResponse response = new SearchResponse();
+        searchService.search(request, response);
+        return response;
+    }
+
+    @ApiOperation(value = "上传文件", notes = "上传文件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "file", value = "文件", required = true, dataType = "file")
     })
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
-    public SearchResponse search(@Valid SearchRequest request) {
-        return new SearchResponse();
+    public SearchResponse upload(@Valid SearchRequest request) {
+        SearchResponse response = new SearchResponse();
+        return response;
     }
 
     @ApiOperation(value = "获取查重结果", notes = "")

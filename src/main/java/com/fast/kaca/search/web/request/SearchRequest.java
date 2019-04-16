@@ -9,4 +9,12 @@ import javax.validation.constraints.NotBlank;
 public class SearchRequest extends BaseRequest {
     @NotBlank
     private String key;
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
 }
