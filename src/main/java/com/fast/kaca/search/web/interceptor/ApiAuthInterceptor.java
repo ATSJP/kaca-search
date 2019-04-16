@@ -34,6 +34,7 @@ public class ApiAuthInterceptor implements HandlerInterceptor {
             BaseResponse baseResponse = new BaseResponse();
             baseResponse.setCode(ConstantApi.CODE.ILLEGAL_REQUEST.getCode());
             baseResponse.setMsg(ConstantApi.CODE.ILLEGAL_REQUEST.getDesc());
+            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(JSONObject.toJSONString(baseResponse));
             return false;
         }
@@ -42,6 +43,7 @@ public class ApiAuthInterceptor implements HandlerInterceptor {
             BaseResponse baseResponse = new BaseResponse();
             baseResponse.setCode(ConstantApi.CODE.TOKEN_INVALID.getCode());
             baseResponse.setMsg(ConstantApi.CODE.TOKEN_INVALID.getDesc());
+            response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write(JSONObject.toJSONString(baseResponse));
             return false;
         }
