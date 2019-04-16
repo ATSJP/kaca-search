@@ -1,6 +1,7 @@
 package com.fast.kaca.search.web.service;
 
 import com.fast.kaca.search.web.constant.ConstantApi;
+import com.fast.kaca.search.web.constant.ConstantCache;
 import com.fast.kaca.search.web.dao.UserDao;
 import com.fast.kaca.search.web.entity.UserEntity;
 import com.fast.kaca.search.web.request.LoginRequest;
@@ -40,7 +41,7 @@ public class UserService {
         }
         // 生成token
         String token = TokenGenerate.getToken(userName, password);
-        redissonTools.set("token-" + userEntity.getId(), token);
+        redissonTools.set("token-" + userEntity.getId(), token, ConstantCache.LOGIN_TOKEN_TIME_OUT);
         response.setUid(userEntity.getId());
         response.setToken(token);
         response.setCode(ConstantApi.LOGIN_MESSAGE.SUCCESS.getCode());
