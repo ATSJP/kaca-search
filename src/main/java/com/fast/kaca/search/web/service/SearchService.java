@@ -29,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import javax.annotation.Resource;
@@ -90,19 +91,24 @@ public class SearchService {
                 logger.info("create index start->fileName:{}", item);
                 long start2 = System.currentTimeMillis();
                 paragraphList.forEach(paragraph -> {
-                    Iterable<String> result = Splitter.fixedLength(config.getTextLength()).trimResults()
-                            .split(paragraph);
-                    // 将文件分段，每指定配置字数为一段
-                    for (String str : result) {
-                        // 每段建立索引 并保存索引
-                        Document doc = this.createDocument(item, str);
-                        documents.add(doc);
+                    if (!StringUtils.isEmpty(paragraph)) {
+                        Iterable<String> result = Splitter.fixedLength(config.getTextLength()).trimResults()
+                                .split(paragraph);
+                        // 将文件分段，每指定配置字数为一段
+                        for (String str : result) {
+                            if (!StringUtils.isEmpty(str)) {
+                                // 每段建立索引 并保存索引
+                                Document doc = this.createDocument(item, str);
+                                documents.add(doc);
+                            }
+                        }
                     }
                 });
                 long end2 = System.currentTimeMillis();
                 logger.info("create index end->fileName:{},create index end(ms):{}", item, (end2 - start2));
             }
             long end = System.currentTimeMillis();
+            logger.info("read article to create index end->fileName:{},size:{}", item, documents.size());
             logger.info("read article to create index end->fileName:{},timeSpend(ms):{}", item, (end - start));
         });
         try {
