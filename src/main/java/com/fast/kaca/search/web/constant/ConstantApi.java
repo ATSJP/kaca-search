@@ -30,6 +30,29 @@ public interface ConstantApi {
         }
     }
 
+    enum TOKEN_STATUS {
+        /**
+         * 返回token状态
+         */
+        NOT_EFFECT(1, "token失效,请重新登陆");
+
+        private int code;
+        private String desc;
+
+        TOKEN_STATUS(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
+
     enum LOGIN_MESSAGE {
         /**
          * 返回状态及自定义信息

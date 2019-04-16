@@ -24,6 +24,7 @@ public class LoginController {
     @Resource
     private UserService userService;
 
+
     @ApiOperation(value = "登陆", notes = "")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "String"),
@@ -33,6 +34,18 @@ public class LoginController {
     public LoginResponse login(@Valid LoginRequest request) {
         LoginResponse response = new LoginResponse();
         userService.login(request, response);
+        return response;
+    }
+
+    @ApiOperation(value = "退出", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
+    })
+    @RequestMapping(value = "/logout", method = RequestMethod.DELETE)
+    public LoginResponse logout(LoginRequest request) {
+        LoginResponse response = new LoginResponse();
+        userService.logout(request, response);
         return response;
     }
 

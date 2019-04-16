@@ -5,8 +5,12 @@ import com.fast.kaca.search.web.dao.UserDao;
 import com.fast.kaca.search.web.entity.UserEntity;
 import com.fast.kaca.search.web.request.LoginRequest;
 import com.fast.kaca.search.web.response.LoginResponse;
+import com.fast.kaca.search.web.utils.RedissonTools;
+import com.fast.kaca.search.web.utils.TokenGenerate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 
 /**
  * @author sjp
@@ -17,6 +21,8 @@ public class UserService {
 
     @Autowired
     private UserDao userDao;
+    @Resource
+    private RedissonTools redissonTools;
 
     public void login(LoginRequest request, LoginResponse response) {
         String userName = request.getUserName();
@@ -32,8 +38,18 @@ public class UserService {
             response.setMsg(ConstantApi.LOGIN_MESSAGE.ERROR.getDesc());
             return;
         }
+        // 生成token
+        String token = TokenGenerate.getToken(userName, password);
+        redissonTools.set("token-" + userEntity.getId(), token);
+        response.setUid(userEntity.getId());
+        response.setToken(token);
         response.setCode(ConstantApi.LOGIN_MESSAGE.SUCCESS.getCode());
         response.setMsg(ConstantApi.LOGIN_MESSAGE.SUCCESS.getDesc());
     }
 
+    public void logout(LoginRequest request, LoginResponse response) {
+        redissonTools.delete("token-" + request.getUid());
+        response.setCode(ConstantApi.CODE.SUCCESS.getCode());
+        response.setMsg(ConstantApi.CODE.SUCCESS.getDesc());
+    }
 }

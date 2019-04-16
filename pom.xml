@@ -23,6 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
 
+        <fastJson.version>1.2.47</fastJson.version>
         <druid.version>1.0.29</druid.version>
         <mysql.version>8.0.13</mysql.version>
         <redisson.version>3.8.2</redisson.version>
@@ -70,6 +71,12 @@
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
             <version>4.7.2</version>
+        </dependency>
+        <!-- fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastJson.version}</version>
         </dependency>
         <!-- mysql依赖 -->
         <dependency>
@@ -134,7 +141,6 @@
                 <configuration>
                     <fork>true</fork>
                 </configuration>
-
             </plugin>
         </plugins>
     </build>

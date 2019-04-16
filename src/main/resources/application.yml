@@ -22,8 +22,8 @@ spring:
     generateDdl: false
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
+        show_sql: false
+        format_sql: false
 
   jackson:
     time-zone: GMT+8
@@ -32,7 +32,7 @@ spring:
   redis:
     host: 106.15.200.151
     port: 6379
-#    password: redis@SJP
+    #    password: redis@SJP
     jedis:
       pool:
         max-active: 100
@@ -40,7 +40,7 @@ spring:
         min-idle: 10
         max-wait: 6000
 
-  #解决乱码问题
+  #瑙ｅ喅涔辩爜闂
   http:
     encoding:
       force: true
@@ -49,13 +49,13 @@ spring:
 
   devtools:
     restart:
-      enabled: true  #设置开启热部署
+      enabled: true  #璁剧疆寮�鍚儹閮ㄧ讲
   freemarker:
-    cache: false    #页面不加载缓存，修改即时生效
+    cache: false    #椤甸潰涓嶅姞杞界紦瀛橈紝淇敼鍗虫椂鐢熸晥
 
-# 搜索索引位置
+# 鎼滅储绱㈠紩浣嶇疆
 index_path: D:\\lucene
-# 论文目录
+# 璁烘枃鐩綍
 file_path: C:\\Users\\sjp\\Desktop\\source
-# 论文切割粒度
+# 璁烘枃鍒囧壊绮掑害
 text_length: 20

@@ -5,4 +5,5 @@ package com.fast.kaca.search.web.response;
  * @date 2019/4/16
  **/
 public class LoginResponse extends BaseResponse {
+
 }
