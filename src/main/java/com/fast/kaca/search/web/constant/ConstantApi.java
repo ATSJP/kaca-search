@@ -6,7 +6,7 @@ package com.fast.kaca.search.web.constant;
  **/
 public interface ConstantApi {
 
-    public enum code {
+    enum CODE {
         /**
          * 返回状态
          */
@@ -16,7 +16,31 @@ public interface ConstantApi {
         private int code;
         private String desc;
 
-        code(int code, String desc) {
+        CODE(int code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public int getCode() {
+            return code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
+
+    enum LOGIN_MESSAGE {
+        /**
+         * 返回状态及自定义信息
+         */
+        SUCCESS(0, "登陆成功"),
+        ERROR(1, "登陆失败，请确认您的用户名或者密码");
+
+        private int code;
+        private String desc;
+
+        LOGIN_MESSAGE(int code, String desc) {
             this.code = code;
             this.desc = desc;
         }

@@ -12,11 +12,11 @@ public class BaseResponse implements Serializable {
     /**
      * 返回状态码
      */
-    private int code = ConstantApi.code.SUCCESS.getCode();
+    private int code = ConstantApi.CODE.SUCCESS.getCode();
     /**
      * 返回描述
      */
-    private String msg = ConstantApi.code.SUCCESS.getDesc();
+    private String msg = ConstantApi.CODE.SUCCESS.getDesc();
     /**
      * 返回数据
      */

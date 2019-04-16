@@ -1,0 +1,61 @@
+server:
+  port: 80
+  tomcat:
+    max-threads: 1000
+    min-spare-threads: 10
+    uri-encoding: UTF-8
+
+debug: true
+
+spring:
+  profiles:
+    include: logback
+
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://106.15.200.151:3306/food?useSSL=false
+    username: root
+    password: 1234
+
+  jpa:
+    generateDdl: false
+    properties:
+      hibernate:
+        show_sql: true
+        format_sql: true
+
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+
+  redis:
+    host: 106.15.200.151
+    port: 6379
+#    password: redis@SJP
+    jedis:
+      pool:
+        max-active: 100
+        max-idle: 100
+        min-idle: 10
+        max-wait: 6000
+
+  #解决乱码问题
+  http:
+    encoding:
+      force: true
+      charset: UTF-8
+      enabled: true
+
+  devtools:
+    restart:
+      enabled: true  #设置开启热部署
+  freemarker:
+    cache: false    #页面不加载缓存，修改即时生效
+
+# 搜索索引位置
+index_path: D:\\lucene
+# 论文目录
+file_path: C:\\Users\\sjp\\Desktop\\source
+# 论文切割粒度
+text_length: 20
