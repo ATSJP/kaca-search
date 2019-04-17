@@ -10,6 +10,10 @@ debug: false
 spring:
 #  profiles:
 #    include:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -58,8 +62,8 @@ logging:
   config: classpath:logback-prod.xml
 
 # 搜索索引位置
-index_path: /user/local/search/index
+index_path: /user/local/search/index/
 # 论文目录
-file_path: /user/local/search/lib
+file_path: /user/local/search/lib/
 # 论文切割粒度
 text_length: 20

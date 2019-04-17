@@ -1,8 +1,9 @@
 package com.fast.kaca.search.web.utils;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -12,8 +13,6 @@ import java.util.List;
  * @date 2019/4/14
  **/
 public class FileUtils {
-
-    private static Logger logger = LoggerFactory.getLogger(IoUtils.class);
 
     /**
      * 读取论文保存目录下，所有的论文名称
@@ -48,4 +47,19 @@ public class FileUtils {
         return file;
     }
 
+    public static void writeFile(String filePath, String fileName, byte[] content) throws Exception {
+        File file = new File(filePath + fileName);
+        FileOutputStream outputStream = new FileOutputStream(file);
+        FileChannel channel = outputStream.getChannel();
+        ByteBuffer buffer = ByteBuffer.allocate(1024);
+//        while(){
+            // 将postion置0，limit变成capacity，迎接下一次读取
+            buffer.clear();
+            buffer.put(content);
+            buffer.flip();
+            channel.write(buffer);
+//        }
+        channel.close();
+        outputStream.close();
+    }
 }

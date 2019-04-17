@@ -1,10 +1,13 @@
 package com.fast.kaca.search.web.service;
 
-import com.fast.kaca.search.web.config.Config;
+import com.fast.kaca.search.web.config.ConfigProperties;
+import com.fast.kaca.search.web.constant.ConstantApi;
+import com.fast.kaca.search.web.dao.FileDao;
+import com.fast.kaca.search.web.entity.FileEntity;
 import com.fast.kaca.search.web.request.SearchRequest;
 import com.fast.kaca.search.web.response.SearchResponse;
 import com.fast.kaca.search.web.utils.FileUtils;
-import com.fast.kaca.search.web.utils.IoUtils;
+import com.fast.kaca.search.web.utils.LuceneTool;
 import com.fast.kaca.search.web.utils.WordUtils;
 import com.fast.kaca.search.web.vo.SearchVo;
 import com.google.common.base.Splitter;
@@ -29,15 +32,22 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.stream.Collectors;
 
 /**
  * @author sys
@@ -49,7 +59,11 @@ public class SearchService {
     private Logger logger = LoggerFactory.getLogger(SearchService.class);
 
     @Resource
-    private Config config;
+    private ConfigProperties configProperties;
+    @Resource
+    private LuceneTool luceneTool;
+    @Resource
+    private FileDao fileDao;
 
     /**
      * 跑所有文章的索引(仅首次没有任何索引时需要，其余增量索引)
@@ -69,7 +83,7 @@ public class SearchService {
      */
     public void createIndex() {
         // 获取所有要生成索引的文件名
-        List<String> fileNameList = FileUtils.readFileContentList(config.getFileDir());
+        List<String> fileNameList = FileUtils.readFileContentList(configProperties.getFileDir());
         if (CollectionUtils.isEmpty(fileNameList)) {
             logger.info("there is nothing");
             return;
@@ -81,7 +95,7 @@ public class SearchService {
             // 读取文件
             logger.info("readWordFile start->fileName:{}", item);
             long start1 = System.currentTimeMillis();
-            List<String> paragraphList = WordUtils.readWordFile(config.getFileDir() + "\\" + item);
+            List<String> paragraphList = WordUtils.readWordFile(configProperties.getFileDir() + item);
             long end1 = System.currentTimeMillis();
             logger.info("readWordFile end->fileName:{},time(ms):{}", item, (end1 - start1));
             if (CollectionUtils.isEmpty(paragraphList)) {
@@ -91,7 +105,7 @@ public class SearchService {
                 long start2 = System.currentTimeMillis();
                 paragraphList.forEach(paragraph -> {
                     if (!StringUtils.isEmpty(paragraph)) {
-                        Iterable<String> result = Splitter.fixedLength(config.getTextLength()).trimResults()
+                        Iterable<String> result = Splitter.fixedLength(configProperties.getTextLength()).trimResults()
                                 .split(paragraph);
                         // 将文件分段，每指定配置字数为一段
                         for (String str : result) {
@@ -111,7 +125,7 @@ public class SearchService {
             logger.info("read article to create index end->fileName:{},timeSpend(ms):{}", item, (end - start));
         });
         try {
-            IoUtils.write(documents, config.getIndexDir());
+            luceneTool.write(documents, configProperties.getIndexDir());
         } catch (IOException e) {
             logger.error("write doc error:{}", e.getMessage());
         }
@@ -138,12 +152,19 @@ public class SearchService {
         return doc;
     }
 
+    /**
+     * 搜索
+     *
+     * @param request  req
+     * @param response res
+     * @throws Exception 异常
+     */
     public void search(SearchRequest request, SearchResponse response) throws Exception {
         String key = request.getKey();
         IKAnalyzer ikAnalyzer = new IKAnalyzer();
         List<SearchVo> searchVoList = new LinkedList<>();
         // 索引目录对象
-        Directory directory = FSDirectory.open(new File(config.getIndexDir()));
+        Directory directory = FSDirectory.open(new File(configProperties.getIndexDir()));
         // 索引读取工具
         IndexReader reader = DirectoryReader.open(directory);
         // 索引搜索工具
@@ -185,5 +206,49 @@ public class SearchService {
         }
         response.setSearchVoList(searchVoList);
         response.setSearchVoList(searchVoList);
+    }
+
+    /**
+     * 上传文件
+     *
+     * @param request  req
+     * @param response res
+     */
+    public void upload(SearchRequest request, SearchResponse response) {
+        // Get file name
+        MultipartFile[] files = request.getFiles();
+        String uploadedFileName = files == null ? "" : Arrays.stream(files).map(MultipartFile::getOriginalFilename)
+                .filter(x -> !StringUtils.isEmpty(x)).collect(Collectors.joining(" , "));
+        if (StringUtils.isEmpty(uploadedFileName)) {
+            response.setCode(ConstantApi.CODE.FAIL.getCode());
+            response.setMsg(ConstantApi.FILE_UPLOAD.FAIL.getDesc());
+            return;
+        }
+        Arrays.asList(files).forEach(item -> {
+            if (!item.isEmpty()) {
+                boolean isSaveFileSuccess = false;
+                // 保存文件
+                try {
+                    byte[] bytes = item.getBytes();
+                    Path path = Paths.get(configProperties.getFileDir() + item.getOriginalFilename());
+                    Files.write(path, bytes);
+                    isSaveFileSuccess = true;
+                } catch (Exception e) {
+                    logger.error("upload fail->e:{}", e.getMessage());
+                }
+                if (isSaveFileSuccess) {
+                    // 保存上传文件记录
+                    FileEntity fileEntity = new FileEntity();
+                    fileEntity.setFileName(item.getOriginalFilename());
+                    fileEntity.setCreateId(request.getUid());
+                    fileEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
+                    fileEntity.setUpdateId(request.getUid());
+                    fileEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
+                    fileDao.save(fileEntity);
+                }
+            }
+        });
+        // 建立索引
+        this.initIndexTask();
     }
 }

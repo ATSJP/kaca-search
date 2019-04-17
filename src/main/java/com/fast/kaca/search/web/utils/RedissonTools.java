@@ -6,7 +6,7 @@ import org.redisson.api.RMap;
 import org.redisson.api.RedissonClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.util.Map;
@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
  * @author sys
  * @date 2019/1/16
  **/
-@Service
+@Component
 public class RedissonTools {
 
 	private Logger			logger	= LoggerFactory.getLogger(getClass());

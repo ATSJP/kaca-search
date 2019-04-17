@@ -70,4 +70,22 @@ public interface ConstantApi {
             return desc;
         }
     }
+
+    enum FILE_UPLOAD {
+        /**
+         * 文件上传自定义提示
+         */
+        SUCCESS("上传成功，正在查重"),
+        FAIL("上传失败，文件不为空");
+
+        private String desc;
+
+        FILE_UPLOAD(String desc) {
+            this.desc = desc;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
 }

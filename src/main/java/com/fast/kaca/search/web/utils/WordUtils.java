@@ -31,13 +31,6 @@ public class WordUtils {
     private static final String WORD_2007 = ".doc";
     private static final String WORD_2010 = ".docx";
 
-//    WordUtils() throws Exception {
-//        if (StringUtils.isEmpty(fileDir)) {
-//            logger.error("未配置论文保存路径！ file_path is empty");
-//            throw new Exception("未配置论文保存路径！ file_path is empty");
-//        }
-//    }
-
     /**
      * 读取word文档
      *

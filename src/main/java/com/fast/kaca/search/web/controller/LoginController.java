@@ -6,9 +6,7 @@ import com.fast.kaca.search.web.service.UserService;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
@@ -29,7 +27,7 @@ public class LoginController {
             @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/register", method = RequestMethod.PUT)
+    @PutMapping(value = "/register")
     public LoginResponse register(@Valid LoginRequest request) {
         LoginResponse response = new LoginResponse();
         userService.register(request, response);
@@ -41,7 +39,7 @@ public class LoginController {
             @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
     })
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    @PostMapping(value = "/login")
     public LoginResponse login(@Valid LoginRequest request) {
         LoginResponse response = new LoginResponse();
         userService.login(request, response);
@@ -53,7 +51,7 @@ public class LoginController {
             @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
             @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
     })
-    @RequestMapping(value = "/logout", method = RequestMethod.DELETE)
+    @DeleteMapping(value = "/logout")
     public LoginResponse logout(LoginRequest request) {
         LoginResponse response = new LoginResponse();
         userService.logout(request, response);

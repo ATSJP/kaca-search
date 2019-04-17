@@ -8,7 +8,9 @@ import org.springframework.stereotype.Component;
  * @date 2019/4/15
  **/
 @Component
-public class Config {
+public class ConfigProperties {
+    @Value("${spring.profiles.active}")
+    private String env;
     /**
      * 论文保存路径
      */
@@ -24,6 +26,10 @@ public class Config {
      */
     @Value("${text_length}")
     private Integer textLength;
+
+    public String getEnv() {
+        return env;
+    }
 
     public String getFileDir() {
         return fileDir;

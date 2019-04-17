@@ -24,6 +24,12 @@ public class UserService {
     @Resource
     private RedissonTools redissonTools;
 
+    /**
+     * 登陆
+     *
+     * @param request  req
+     * @param response res
+     */
     public void login(LoginRequest request, LoginResponse response) {
         String userName = request.getUserName();
         String password = request.getPassword();
@@ -47,12 +53,24 @@ public class UserService {
         response.setMsg(ConstantApi.LOGIN_MESSAGE.SUCCESS.getDesc());
     }
 
+    /**
+     * 登出
+     *
+     * @param request  req
+     * @param response res
+     */
     public void logout(LoginRequest request, LoginResponse response) {
         redissonTools.delete("token-" + request.getUid());
         response.setCode(ConstantApi.CODE.SUCCESS.getCode());
         response.setMsg(ConstantApi.CODE.SUCCESS.getDesc());
     }
 
+    /**
+     * 注册
+     *
+     * @param request  req
+     * @param response res
+     */
     public void register(LoginRequest request, LoginResponse response) {
         String userName = request.getUserName();
         String password = request.getPassword();
@@ -77,6 +95,12 @@ public class UserService {
         response.setMsg(ConstantApi.LOGIN_MESSAGE.SUCCESS.getDesc());
     }
 
+    /**
+     * 检查用户名是否已存在
+     *
+     * @param userName 用户名
+     * @return boolean true 存在 false 不存在
+     */
     private boolean checkUserNameExist(String userName) {
         UserEntity userEntity = userDao.findByUserName(userName);
         if (userEntity != null) {
