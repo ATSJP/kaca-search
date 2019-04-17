@@ -44,7 +44,7 @@ public class IoUtils {
         //索引库的存储目录
         Directory directory = FSDirectory.open(new File(path));
         //关联当前lucene版本和分值器
-        IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_47, ANALYZER);
+        IndexWriterConfig config = new IndexWriterConfig(Version.LATEST, ANALYZER);
         //传入目录和分词器
         IndexWriter indexWriter = new IndexWriter(directory, config);
         //写入到目录文件中
