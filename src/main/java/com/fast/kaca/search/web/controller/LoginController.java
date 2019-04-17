@@ -24,6 +24,17 @@ public class LoginController {
     @Resource
     private UserService userService;
 
+    @ApiOperation(value = "注册", notes = "")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
+    })
+    @RequestMapping(value = "/register", method = RequestMethod.PUT)
+    public LoginResponse register(@Valid LoginRequest request) {
+        LoginResponse response = new LoginResponse();
+        userService.register(request, response);
+        return response;
+    }
 
     @ApiOperation(value = "登陆", notes = "")
     @ApiImplicitParams({

@@ -30,12 +30,12 @@ public class UserService {
         UserEntity userEntity = userDao.findByUserName(userName);
         if (userEntity == null) {
             response.setCode(ConstantApi.CODE.FAIL.getCode());
-            response.setMsg(ConstantApi.LOGIN_MESSAGE.ERROR.getDesc());
+            response.setMsg(ConstantApi.LOGIN_MESSAGE.FAIL.getDesc());
             return;
         }
         if (!password.equals(userEntity.getPassword())) {
             response.setCode(ConstantApi.CODE.FAIL.getCode());
-            response.setMsg(ConstantApi.LOGIN_MESSAGE.ERROR.getDesc());
+            response.setMsg(ConstantApi.LOGIN_MESSAGE.FAIL.getDesc());
             return;
         }
         // 生成token
@@ -51,5 +51,37 @@ public class UserService {
         redissonTools.delete("token-" + request.getUid());
         response.setCode(ConstantApi.CODE.SUCCESS.getCode());
         response.setMsg(ConstantApi.CODE.SUCCESS.getDesc());
+    }
+
+    public void register(LoginRequest request, LoginResponse response) {
+        String userName = request.getUserName();
+        String password = request.getPassword();
+        // 检查用户名是否存在
+        boolean isUserNameExist = this.checkUserNameExist(userName);
+        if (isUserNameExist) {
+            response.setCode(ConstantApi.CODE.FAIL.getCode());
+            response.setMsg(ConstantApi.REGISTER_MESSAGE.FAIL.getDesc());
+            return;
+        }
+        UserEntity userEntity = new UserEntity();
+        userEntity.setUserName(userName);
+        userEntity.setPassword(password);
+        userEntity.setUserRole("2");
+        userDao.save(userEntity);
+        // 生成token
+        String token = TokenGenerate.getToken(userName, password);
+        redissonTools.set("token-" + userEntity.getId(), token, ConstantCache.LOGIN_TOKEN_TIME_OUT);
+        response.setToken(token);
+        response.setUid(userEntity.getId());
+        response.setCode(ConstantApi.CODE.SUCCESS.getCode());
+        response.setMsg(ConstantApi.LOGIN_MESSAGE.SUCCESS.getDesc());
+    }
+
+    private boolean checkUserNameExist(String userName) {
+        UserEntity userEntity = userDao.findByUserName(userName);
+        if (userEntity != null) {
+            return true;
+        }
+        return false;
     }
 }

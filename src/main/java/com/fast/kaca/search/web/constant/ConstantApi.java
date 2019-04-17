@@ -40,7 +40,7 @@ public interface ConstantApi {
          * 返回状态及自定义信息
          */
         SUCCESS("登陆成功"),
-        ERROR("登陆失败，请确认您的用户名或者密码");
+        FAIL("登陆失败，请确认您的用户名或者密码");
 
         private String desc;
 
@@ -53,4 +53,21 @@ public interface ConstantApi {
         }
     }
 
+    enum REGISTER_MESSAGE {
+        /**
+         * 返回状态及自定义信息
+         */
+        SUCCESS("注册成功"),
+        FAIL("注册失败，用户名已存在");
+
+        private String desc;
+
+        REGISTER_MESSAGE(String desc) {
+            this.desc = desc;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
 }

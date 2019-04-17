@@ -83,4 +83,6 @@ public class UserEntity {
     public int hashCode() {
         return Objects.hash(id, userName, password, lastLoginTime, userRole);
     }
+
+    // 0 超级管理员 1 普通管理员 2 会员
 }

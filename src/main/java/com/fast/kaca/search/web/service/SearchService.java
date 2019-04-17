@@ -12,8 +12,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -130,8 +129,8 @@ public class SearchService {
         Document doc = new Document();
         // 获取每列数据
         // tips: StoredField 会储存，但不是被建立索引 StringField 会建立索引，但不会分词，TextField 会建立索引，也会分词
-        Field articleNameField = new StoredField("articleName", articleName);
-        Field textField = new StringField("text", text, Field.Store.YES);
+        Field articleNameField = new Field("articleName", articleName, TextField.TYPE_STORED);
+        Field textField = new Field("text", text, TextField.TYPE_STORED);
         // 添加到Document中
         doc.add(articleNameField);
         doc.add(textField);

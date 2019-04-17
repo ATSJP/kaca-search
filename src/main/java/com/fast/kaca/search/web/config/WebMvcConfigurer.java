@@ -36,6 +36,7 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
         registry.addInterceptor(apiAuthInterceptor)
                 .addPathPatterns("/**")
                 .excludePathPatterns("/user/login")
+                .excludePathPatterns("/user/register")
                 .excludePathPatterns("/swagger-resources/**", "/webjars/**", "/v2/**", "/swagger-ui.html/**");
         super.addInterceptors(registry);
     }
