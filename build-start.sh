@@ -3,9 +3,9 @@ git revert
 git pull -rebase
 
 # 替换环境文件
-echo "spring: /
-        profiles: /
-          active: prod" > filename
+echo "spring:
+        profiles:
+          active: prod" > ./src/main/resources/application.yml
 
 mvn clean package
 
