@@ -8,7 +8,7 @@ public interface ConstantSystem {
     /**
      * 1.0版本产生的对比结果
      */
-    String VERSION = "VERSION_1.0";
+    String VERSION = "VERSION_1.0_";
 
     enum ENV {
         /**

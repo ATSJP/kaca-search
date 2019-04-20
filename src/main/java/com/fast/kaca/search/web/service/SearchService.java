@@ -2,6 +2,7 @@ package com.fast.kaca.search.web.service;
 
 import com.fast.kaca.search.web.config.ConfigProperties;
 import com.fast.kaca.search.web.constant.ConstantApi;
+import com.fast.kaca.search.web.constant.ConstantSystem;
 import com.fast.kaca.search.web.dao.FileDao;
 import com.fast.kaca.search.web.dao.UserDao;
 import com.fast.kaca.search.web.entity.FileEntity;
@@ -17,21 +18,9 @@ import com.fast.kaca.search.web.vo.FileVo;
 import com.fast.kaca.search.web.vo.SearchVo;
 import com.google.common.base.Splitter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
-import org.apache.lucene.search.highlight.*;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -40,10 +29,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import org.wltea.analyzer.lucene.IKAnalyzer;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -64,6 +51,8 @@ public class SearchService {
 
     @Resource
     private ConfigProperties configProperties;
+    @Resource
+    private CheckRepeatService checkRepeatService;
     @Resource
     private LuceneTool luceneTool;
     @Resource
@@ -151,6 +140,7 @@ public class SearchService {
         // 获取每列数据
         // tips: StoredField 会储存，但不是被建立索引 StringField 会建立索引，但不会分词，TextField 会建立索引，也会分词
         Field articleNameField = new Field("articleName", articleName, TextField.TYPE_STORED);
+//        Field textField = new StringField("text", text, Field.Store.YES);
         Field textField = new Field("text", text, TextField.TYPE_STORED);
         // 添加到Document中
         doc.add(articleNameField);
@@ -166,51 +156,9 @@ public class SearchService {
      * @param response res
      * @throws Exception 异常
      */
-    public void search(SearchRequest request, SearchResponse response) throws Exception {
+    public void search(SearchRequest request, SearchResponse response) {
         String key = request.getKey();
-        IKAnalyzer ikAnalyzer = new IKAnalyzer();
-        List<SearchVo> searchVoList = new LinkedList<>();
-        // 索引目录对象
-        Directory directory = FSDirectory.open(new File(configProperties.getIndexDir()));
-        // 索引读取工具
-        IndexReader reader = DirectoryReader.open(directory);
-        // 索引搜索工具
-        IndexSearcher searcher = new IndexSearcher(reader);
-        // 创建查询解析器,两个参数：默认要查询的字段的名称，分词器
-        QueryParser parser = new QueryParser(Version.LUCENE_47, "text", ikAnalyzer);
-        // 创建查询对象
-        Query query = parser.parse(key);
-        // 最终被分词后添加的前缀和后缀处理器，默认是粗体<B></B>
-        SimpleHTMLFormatter htmlFormatter = new SimpleHTMLFormatter("<font color=red>", "</font>");
-        // 高亮搜索的词添加到高亮处理器中
-        Highlighter highlighter = new Highlighter(htmlFormatter, new QueryScorer(query));
-        // 搜索数据,两个参数：查询条件对象要查询的最大结果条数
-        // 返回的结果是 按照匹配度排名得分前N名的文档信息（包含查询到的总条数信息、所有符合条件的文档的编号信息）。
-        TopDocs topDocs = searcher.search(query, 10);
-        // 获取得分文档对象（ScoreDoc）数组.ScoreDoc中包含：文档的编号、文档的得分
-        ScoreDoc[] scoreDocs = topDocs.scoreDocs;
-        for (ScoreDoc scoreDoc : scoreDocs) {
-            // 取出文档编号
-            int docID = scoreDoc.doc;
-            // 根据编号去找文档
-            Document doc = reader.document(docID);
-            String text = doc.get("text");
-            // 将查询的词和搜索词匹配，匹配到添加前缀和后缀
-            TokenStream tokenStream = TokenSources.getAnyTokenStream(searcher.getIndexReader(), docID, "text", ikAnalyzer);
-            // 传入的第二个参数是查询的值
-            TextFragment[] frag = highlighter.getBestTextFragments(tokenStream, text, false, 10);
-            String textValue = "";
-            for (TextFragment textFragment : frag) {
-                if ((textFragment != null) && (textFragment.getScore() > 0)) {
-                    textValue = ((textFragment.toString()));
-                }
-            }
-            SearchVo searchVo = new SearchVo();
-            searchVo.setArticleName(doc.get("articleName"));
-            searchVo.setText(textValue);
-            searchVo.setScore(scoreDoc.score);
-            searchVoList.add(searchVo);
-        }
+        List<SearchVo> searchVoList = luceneTool.search(key);
         response.setData(searchVoList);
     }
 
@@ -251,13 +199,24 @@ public class SearchService {
                     fileEntity.setUpdateId(request.getUid());
                     fileEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
                     fileDao.save(fileEntity);
+                    // 论文查重-建立查重文件
+                    checkRepeatService.startCheckRepeatTask(item.getOriginalFilename());
                 }
             }
         });
-        // 建立索引
+        // 此篇文章入库,建立索引
         this.initIndexTask(request);
     }
 
+
+
+
+    /**
+     * 已上传文件list
+     *
+     * @param request  req
+     * @param response res
+     */
     public void fileList(SearchRequest request, SearchResponse response) {
         // 获取文件list: 0 拿自己的 1 获取库文件
         Short isListType = request.getIsListType();
@@ -317,7 +276,7 @@ public class SearchService {
                 filePath = configProperties.getFileSourceDir() + fileName;
             } else {
                 // 下载处理好的文件
-                filePath = configProperties.getFileResultDir() + fileName;
+                filePath = configProperties.getFileResultDir() + ConstantSystem.VERSION + fileName;
             }
             ByteArrayResource byteArrayResource = null;
             try {

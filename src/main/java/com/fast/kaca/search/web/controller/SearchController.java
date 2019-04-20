@@ -41,7 +41,7 @@ public class SearchController {
             @ApiImplicitParam(name = "key", value = "搜索关键词", required = true, dataType = "String")
     })
     @GetMapping()
-    public SearchResponse search(@Valid SearchRequest request) throws Exception {
+    public SearchResponse search(@Valid SearchRequest request) {
         SearchResponse response = new SearchResponse();
         searchService.search(request, response);
         return response;
