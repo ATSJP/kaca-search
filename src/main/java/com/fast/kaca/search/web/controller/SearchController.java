@@ -85,9 +85,9 @@ public class SearchController {
             @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
             @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
             @ApiImplicitParam(name = "fileId", value = "文件id", required = true, dataType = "Number"),
-            @ApiImplicitParam(name = "isSource", value = "是否拿取原文件 0 否 1 是", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "isSource", value = "是否拿取原文件 0 否(获取查重后的文件) 1 是", required = true, dataType = "Number"),
     })
-    @PutMapping("/download")
+    @GetMapping("/download")
     public SearchResponse download(SearchRequest request) {
         SearchResponse response = new SearchResponse();
         searchService.download(request, response);
