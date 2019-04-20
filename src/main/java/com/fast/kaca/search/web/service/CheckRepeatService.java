@@ -1,6 +1,7 @@
 package com.fast.kaca.search.web.service;
 
 import com.fast.kaca.search.web.config.ConfigProperties;
+import com.fast.kaca.search.web.constant.ConstantSystem;
 import com.fast.kaca.search.web.utils.LuceneTool;
 import com.fast.kaca.search.web.utils.WordUtils;
 import com.fast.kaca.search.web.vo.SearchVo;
@@ -38,6 +39,6 @@ public class CheckRepeatService {
                 newParagraphList.add(item);
             });
         }
-        WordUtils.newWord(newParagraphList, configProperties.getFileResultDir() + fileName);
+        WordUtils.newWord(newParagraphList, configProperties.getFileResultDir() + ConstantSystem.VERSION + fileName);
     }
 }
