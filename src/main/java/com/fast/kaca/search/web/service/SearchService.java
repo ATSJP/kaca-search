@@ -4,7 +4,9 @@ import com.fast.kaca.search.web.config.ConfigProperties;
 import com.fast.kaca.search.web.constant.ConstantApi;
 import com.fast.kaca.search.web.dao.FileDao;
 import com.fast.kaca.search.web.entity.FileEntity;
+import com.fast.kaca.search.web.request.FileRequest;
 import com.fast.kaca.search.web.request.SearchRequest;
+import com.fast.kaca.search.web.response.FileResponse;
 import com.fast.kaca.search.web.response.SearchResponse;
 import com.fast.kaca.search.web.utils.FileUtils;
 import com.fast.kaca.search.web.utils.LuceneTool;
@@ -31,6 +33,7 @@ import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -297,8 +300,28 @@ public class SearchService {
      * @param request  req
      * @param response res
      */
-    public void download(SearchRequest request, SearchResponse response) {
-
+    public void download(FileRequest request, FileResponse response) {
+        Integer fileId = request.getFileId();
+        Short isSource = request.getIsSource();
+        boolean isSourceTrue = ConstantApi.IS_TRUE.TRUE.getCode().equals(isSource);
+        Optional<FileEntity> fileEntityOptional = fileDao.findById(fileId);
+        if (fileEntityOptional.isPresent()) {
+            String fileName = fileEntityOptional.get().getFileName();
+            String filePath;
+            if (isSourceTrue) {
+                // 下载源文件
+                filePath = configProperties.getFileSourceDir() + fileName;
+            } else {
+                // 下载处理好的文件
+                filePath = configProperties.getFileResultDir() + fileName;
+            }
+            FileSystemResource file = new FileSystemResource(filePath);
+            response.setFileSystemResource(file);
+        }
+        if (response.getFileSystemResource() == null || !response.getFileSystemResource().exists()) {
+            response.setCode(ConstantApi.CODE.FAIL.getCode());
+            response.setMsg(ConstantApi.FILE_DOWNLOAD.FAIL.getDesc());
+        }
     }
 
     /**

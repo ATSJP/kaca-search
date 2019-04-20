@@ -22,7 +22,7 @@ public class BaseResponse implements Serializable {
     /**
      * 返回状态码
      */
-    private int code = ConstantApi.CODE.SUCCESS.getCode();
+    private Short code = ConstantApi.CODE.SUCCESS.getCode();
     /**
      * 返回描述
      */

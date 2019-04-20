@@ -64,6 +64,8 @@ logging:
 # 搜索索引位置
 index_path: /user/local/search/index/
 # 论文目录
-file_path: /user/local/search/lib/
+file_source_path: /user/local/search/source/
+# 论文对比结果目录
+file_result_path: /user/local/search/result/
 # 论文切割粒度
 text_length: 20
