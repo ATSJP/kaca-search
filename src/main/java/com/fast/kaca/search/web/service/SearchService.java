@@ -240,7 +240,7 @@ public class SearchService {
                     Files.write(path, bytes);
                     isSaveFileSuccess = true;
                 } catch (Exception e) {
-                    logger.error("upload fail->e:{}", e.getMessage());
+                    logger.error("upload fail->Exception:{}", e);
                 }
                 if (isSaveFileSuccess) {
                     // 保存上传文件记录
