@@ -44,10 +44,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
@@ -255,40 +252,91 @@ public class SearchService {
     }
 
     public void fileList(SearchRequest request, SearchResponse response) {
+        // 获取文件list: 0 拿自己的 1 获取库文件
         Short isListAll = request.getIsListAll();
-        Short isListFileData = request.getIsListFileData();
-        boolean isListAllTrue = ConstantApi.IS_TRUE.TRUE.getCode().equals(isListAll);
-        boolean isListFileDataTrue = ConstantApi.IS_TRUE.TRUE.getCode().equals(isListFileData);
-        if (isListAllTrue && isListFileDataTrue) {
-            response.setCode(ConstantApi.CODE.ILLEGAL_REQUEST.getCode());
-            response.setMsg(ConstantApi.CODE.ILLEGAL_REQUEST.getDesc());
+        if (isListAll == null) {
+            response.setCode(ConstantApi.CODE.PARAM_NULL.getCode());
+            response.setMsg(ConstantApi.CODE.PARAM_NULL.getDesc());
             return;
         }
-        if (isListFileDataTrue) {
-            // 拿取库文件
-            return;
-        }
+        boolean isListAllTrue = ConstantApi.FILE_LIST_TYPE.ALL.getCode().equals(isListAll);
         if (isListAllTrue) {
-            // 拿取所有用户的文件
+            // 拿取库文件
+            List<FileVo> fileVoList = this.getAllUserFileList();
+            this.assembleFileListResponse(response, fileVoList);
             return;
         }
-        // 拿取此用户的文件
-        List<FileEntity> fileEntityList = fileDao.findAllByCreateId(request.getUid());
-        if (CollectionUtils.isEmpty(fileEntityList)) {
+        boolean isListSelfTrue = ConstantApi.FILE_LIST_TYPE.SELF.getCode().equals(isListAll);
+        if (isListSelfTrue) {
+            // 拿取此用户的文件
+            List<FileVo> fileVoList = this.getCurrentUserFileList(request.getUid());
+            this.assembleFileListResponse(response, fileVoList);
+            return;
+        }
+        response.setCode(ConstantApi.CODE.ILLEGAL_REQUEST.getCode());
+        response.setMsg(ConstantApi.CODE.ILLEGAL_REQUEST.getDesc());
+    }
+
+    /**
+     * 组装文件list
+     *
+     * @param response   res
+     * @param fileVoList 文件list
+     */
+    private void assembleFileListResponse(SearchResponse response, List<FileVo> fileVoList) {
+        if (CollectionUtils.isEmpty(fileVoList)) {
             response.setCode(ConstantApi.CODE.SUCCESS.getCode());
             response.setMsg(ConstantApi.FILE_LIST.SUCCESS.getDesc());
-            return;
         }
+        response.setData(fileVoList);
+    }
+
+    /**
+     * 下载文件
+     *
+     * @param request  req
+     * @param response res
+     */
+    public void download(SearchRequest request, SearchResponse response) {
+
+    }
+
+    /**
+     * 获取所有用户上传的文件
+     *
+     * @return fileList
+     */
+    private List<FileVo> getAllUserFileList() {
+        Iterable<FileEntity> fileEntityList = fileDao.findAll();
+        Iterator<FileEntity> iterable = fileEntityList.iterator();
+        List<FileVo> fileVoList = new LinkedList<>();
+        while (iterable.hasNext()) {
+            FileVo fileVo = new FileVo();
+            BeanUtils.copyProperties(iterable.next(), fileVo);
+            fileVoList.add(fileVo);
+        }
+        return fileVoList;
+    }
+
+    /**
+     * 根据用户id，获取用户上传的文件
+     *
+     * @param uid 用户id
+     * @return 上传的文件
+     */
+    private List<FileVo> getCurrentUserFileList(Integer uid) {
+        List<FileEntity> fileEntityList = fileDao.findAllByCreateId(uid);
+        if (CollectionUtils.isEmpty(fileEntityList)) {
+            return Collections.emptyList();
+        }
+        // TODO 此处可以优化为list copy方法
         List<FileVo> fileVoList = new LinkedList<>();
         fileEntityList.forEach(item -> {
             FileVo fileVo = new FileVo();
             BeanUtils.copyProperties(item, fileVo);
             fileVoList.add(fileVo);
         });
-        response.setData(fileVoList);
+        return fileVoList;
     }
 
-    public void download(SearchRequest request, SearchResponse response) {
-
-    }
 }

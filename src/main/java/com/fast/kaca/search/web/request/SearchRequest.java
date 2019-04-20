@@ -16,13 +16,9 @@ public class SearchRequest extends BaseRequest {
     @NotBlank
     private String key;
     /**
-     * 是否展示所有已上传文件 0 否 1 是
+     * 获取文件list: 0 拿自己的 1 获取库文件
      */
     private Short isListAll;
-    /**
-     * 是否获取库文件 0 否 1 是
-     */
-    private Short isListFileData;
     /**
      * 上传的文件
      */

@@ -15,6 +15,9 @@ public class UserEntity {
     private String userName;
     private String password;
     private Timestamp lastLoginTime;
+    /**
+     * 0 超级管理员 1 普通管理员 2 会员
+     */
     private String userRole;
 
     @Id

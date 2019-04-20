@@ -15,8 +15,8 @@ public interface ConstantApi {
         SYSTEM_ERROR(2, "系统错误"),
         ILLEGAL_REQUEST(3, "非法请求"),
         TOKEN_INVALID(4, "token失效,请重新登陆"),
-        SELF_1(5, "自定义错误1"),
-        SELF_2(6, "自定义错误2");
+        PARAM_NULL(5, "请求参数不为空"),
+        AUTH_EMPTY(6, "权限不足");
 
         private int code;
         private String desc;
@@ -106,17 +106,17 @@ public interface ConstantApi {
         }
     }
 
-    enum IS_TRUE {
+    enum FILE_LIST_TYPE {
         /**
-         * 0 否 1 是
+         * 0 拿自己的 1 获取库文件
          */
-        FALSE((short) 0, "否"),
-        TRUE((short) 1, "是");
+        SELF((short) 0, "拿自己的"),
+        ALL((short) 1, "获取库文件");
 
         private Short code;
         private String desc;
 
-        IS_TRUE(Short code, String desc) {
+        FILE_LIST_TYPE(Short code, String desc) {
             this.code = code;
             this.desc = desc;
         }

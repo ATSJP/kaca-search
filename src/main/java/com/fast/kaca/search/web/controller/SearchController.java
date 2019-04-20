@@ -55,8 +55,7 @@ public class SearchController {
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
             @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "isListAll", value = "是否展示所有已上传文件 0 否(拿自己的) 1 是(拿大家的)", required = true, dataType = "Number"),
-            @ApiImplicitParam(name = "isListFileData", value = "是否获取库文件 0 否 1 是", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "isListType", value = "获取文件list: 0 拿自己的 1 获取库文件", required = true, dataType = "Number")
     })
     @GetMapping("/fileList")
     public SearchResponse fileList(SearchRequest request) {
