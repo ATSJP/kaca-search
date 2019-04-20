@@ -62,10 +62,10 @@ logging:
   config: classpath:logback-prod.xml
 
 # 搜索索引位置
-index_path: /user/local/search/index/
+index_path: /usr/local/search/index/
 # 论文目录
-file_source_path: /user/local/search/source/
+file_source_path: /usr/local/search/source/
 # 论文对比结果目录
-file_result_path: /user/local/search/result/
+file_result_path: /usr/local/search/result/
 # 论文切割粒度
 text_length: 20
