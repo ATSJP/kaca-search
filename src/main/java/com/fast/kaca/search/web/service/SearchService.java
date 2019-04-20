@@ -9,6 +9,7 @@ import com.fast.kaca.search.web.response.SearchResponse;
 import com.fast.kaca.search.web.utils.FileUtils;
 import com.fast.kaca.search.web.utils.LuceneTool;
 import com.fast.kaca.search.web.utils.WordUtils;
+import com.fast.kaca.search.web.vo.FileVo;
 import com.fast.kaca.search.web.vo.SearchVo;
 import com.google.common.base.Splitter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
@@ -29,6 +30,7 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -68,7 +70,8 @@ public class SearchService {
     /**
      * 跑所有文章的索引(仅首次没有任何索引时需要，其余增量索引)
      */
-    public void initIndexTask() {
+    public void initIndexTask(SearchRequest request) {
+        logger.info("user start initIndexTask->uid:{}", request.getUid());
         // 单线程去跑数据
         ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("initUserEventWhenFinish-pool-%d")
                 .build();
@@ -204,8 +207,7 @@ public class SearchService {
             searchVo.setScore(scoreDoc.score);
             searchVoList.add(searchVo);
         }
-        response.setSearchVoList(searchVoList);
-        response.setSearchVoList(searchVoList);
+        response.setData(searchVoList);
     }
 
     /**
@@ -249,6 +251,44 @@ public class SearchService {
             }
         });
         // 建立索引
-        this.initIndexTask();
+        this.initIndexTask(request);
+    }
+
+    public void fileList(SearchRequest request, SearchResponse response) {
+        Short isListAll = request.getIsListAll();
+        Short isListFileData = request.getIsListFileData();
+        boolean isListAllTrue = ConstantApi.IS_TRUE.TRUE.getCode().equals(isListAll);
+        boolean isListFileDataTrue = ConstantApi.IS_TRUE.TRUE.getCode().equals(isListFileData);
+        if (isListAllTrue && isListFileDataTrue) {
+            response.setCode(ConstantApi.CODE.ILLEGAL_REQUEST.getCode());
+            response.setMsg(ConstantApi.CODE.ILLEGAL_REQUEST.getDesc());
+            return;
+        }
+        if (isListFileDataTrue) {
+            // 拿取库文件
+            return;
+        }
+        if (isListAllTrue) {
+            // 拿取所有用户的文件
+            return;
+        }
+        // 拿取此用户的文件
+        List<FileEntity> fileEntityList = fileDao.findAllByCreateId(request.getUid());
+        if (CollectionUtils.isEmpty(fileEntityList)) {
+            response.setCode(ConstantApi.CODE.SUCCESS.getCode());
+            response.setMsg(ConstantApi.FILE_LIST.SUCCESS.getDesc());
+            return;
+        }
+        List<FileVo> fileVoList = new LinkedList<>();
+        fileEntityList.forEach(item -> {
+            FileVo fileVo = new FileVo();
+            BeanUtils.copyProperties(item, fileVo);
+            fileVoList.add(fileVo);
+        });
+        response.setData(fileVoList);
+    }
+
+    public void download(SearchRequest request, SearchResponse response) {
+
     }
 }

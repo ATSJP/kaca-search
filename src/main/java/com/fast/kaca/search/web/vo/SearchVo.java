@@ -1,10 +1,12 @@
 package com.fast.kaca.search.web.vo;
 
+import java.io.Serializable;
+
 /**
  * @author sys
  * @date 2019/4/16
  **/
-public class SearchVo {
+public class SearchVo implements Serializable {
     /**
      * 文章的名称
      */

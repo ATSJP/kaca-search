@@ -25,7 +25,7 @@ public class SearchController {
     @Resource
     private SearchService searchService;
 
-    @ApiOperation(value = "测试搜索", notes = "测试搜索")
+    @ApiOperation(value = "搜索", notes = "搜索")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
             @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
@@ -35,6 +35,33 @@ public class SearchController {
     public SearchResponse search(@Valid SearchRequest request) throws Exception {
         SearchResponse response = new SearchResponse();
         searchService.search(request, response);
+        return response;
+    }
+
+    @ApiOperation(value = "建立索引", notes = "建立索引")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "key", value = "文章题目", required = true, dataType = "String")
+    })
+    @GetMapping(value = "/createIndex")
+    public SearchResponse createIndex(SearchRequest request) {
+        SearchResponse response = new SearchResponse();
+        searchService.initIndexTask(request);
+        return response;
+    }
+
+    @ApiOperation(value = "获取已上传的文件list", notes = "获取已上传的文件list")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "isListAll", value = "是否展示所有已上传文件 0 否(拿自己的) 1 是(拿大家的)", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "isListFileData", value = "是否获取库文件 0 否 1 是", required = true, dataType = "Number"),
+    })
+    @GetMapping("/fileList")
+    public SearchResponse fileList(SearchRequest request) {
+        SearchResponse response = new SearchResponse();
+        searchService.fileList(request, response);
         return response;
     }
 
@@ -53,16 +80,17 @@ public class SearchController {
         return response;
     }
 
-    @ApiOperation(value = "建立索引", notes = "")
+    @ApiOperation(value = "下载文件", notes = "下载文件")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
             @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
-            @ApiImplicitParam(name = "key", value = "文章题目", required = true, dataType = "String")
+            @ApiImplicitParam(name = "fileId", value = "文件id", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "isSource", value = "是否拿取原文件 0 否 1 是", required = true, dataType = "Number"),
     })
-    @GetMapping(value = "/createIndex")
-    public SearchResponse createIndex(SearchRequest request) {
+    @PutMapping("/download")
+    public SearchResponse download(SearchRequest request) {
         SearchResponse response = new SearchResponse();
-        searchService.initIndexTask();
+        searchService.download(request, response);
         return response;
     }
 }

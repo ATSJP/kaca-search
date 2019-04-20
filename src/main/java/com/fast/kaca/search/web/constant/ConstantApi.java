@@ -88,4 +88,45 @@ public interface ConstantApi {
             return desc;
         }
     }
+
+    enum FILE_LIST {
+        /**
+         * 文件list
+         */
+        SUCCESS("没有找到任何文章哦");
+
+        private String desc;
+
+        FILE_LIST(String desc) {
+            this.desc = desc;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
+
+    enum IS_TRUE {
+        /**
+         * 0 否 1 是
+         */
+        FALSE((short) 0, "否"),
+        TRUE((short) 1, "是");
+
+        private Short code;
+        private String desc;
+
+        IS_TRUE(Short code, String desc) {
+            this.code = code;
+            this.desc = desc;
+        }
+
+        public Short getCode() {
+            return code;
+        }
+
+        public String getDesc() {
+            return desc;
+        }
+    }
 }
