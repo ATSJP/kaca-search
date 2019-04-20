@@ -13,5 +13,11 @@ import java.util.List;
 @Repository
 public interface FileDao extends CrudRepository<FileEntity, Integer> {
 
+    /**
+     * 通过创建人获取文件list
+     *
+     * @param createId 创建人id
+     * @return 文件list
+     */
     List<FileEntity> findAllByCreateId(Integer createId);
 }

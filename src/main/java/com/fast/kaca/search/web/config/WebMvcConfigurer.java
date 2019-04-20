@@ -9,6 +9,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupp
 import javax.annotation.Resource;
 
 /**
+ * web拦截器等配置
+ *
  * @author sys
  * @date 2019/4/16
  **/

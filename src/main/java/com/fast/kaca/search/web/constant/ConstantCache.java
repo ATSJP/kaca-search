@@ -5,7 +5,6 @@ package com.fast.kaca.search.web.constant;
  * @date 2019/4/16
  **/
 public interface ConstantCache {
-
     /**
      * 登陆token有效期 2小时
      */

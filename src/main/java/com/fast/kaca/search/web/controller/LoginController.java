@@ -12,6 +12,8 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 /**
+ * 用户登陆
+ *
  * @author sys
  * @date 2019/4/16
  **/
@@ -22,7 +24,7 @@ public class LoginController {
     @Resource
     private UserService userService;
 
-    @ApiOperation(value = "注册", notes = "")
+    @ApiOperation(value = "注册", notes = "注册")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
@@ -34,7 +36,7 @@ public class LoginController {
         return response;
     }
 
-    @ApiOperation(value = "登陆", notes = "")
+    @ApiOperation(value = "登陆", notes = "登陆")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userName", value = "用户名", required = true, dataType = "String"),
             @ApiImplicitParam(name = "password", value = "密码", required = true, dataType = "String")
@@ -46,7 +48,7 @@ public class LoginController {
         return response;
     }
 
-    @ApiOperation(value = "退出", notes = "")
+    @ApiOperation(value = "退出", notes = "退出")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
             @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),

@@ -83,7 +83,7 @@ public class SearchService {
      */
     public void createIndex() {
         // 获取所有要生成索引的文件名
-        List<String> fileNameList = FileUtils.readFileContentList(configProperties.getFileDir());
+        List<String> fileNameList = FileUtils.readFileContentList(configProperties.getFileSourceDir());
         if (CollectionUtils.isEmpty(fileNameList)) {
             logger.info("there is nothing");
             return;
@@ -95,7 +95,7 @@ public class SearchService {
             // 读取文件
             logger.info("readWordFile start->fileName:{}", item);
             long start1 = System.currentTimeMillis();
-            List<String> paragraphList = WordUtils.readWordFile(configProperties.getFileDir() + item);
+            List<String> paragraphList = WordUtils.readWordFile(configProperties.getFileSourceDir() + item);
             long end1 = System.currentTimeMillis();
             logger.info("readWordFile end->fileName:{},time(ms):{}", item, (end1 - start1));
             if (CollectionUtils.isEmpty(paragraphList)) {
@@ -229,7 +229,7 @@ public class SearchService {
                 // 保存文件
                 try {
                     byte[] bytes = item.getBytes();
-                    Path path = Paths.get(configProperties.getFileDir() + item.getOriginalFilename());
+                    Path path = Paths.get(configProperties.getFileSourceDir() + item.getOriginalFilename());
                     Files.write(path, bytes);
                     isSaveFileSuccess = true;
                 } catch (Exception e) {

@@ -65,6 +65,8 @@ logging:
 # 搜索索引位置
 index_path: D:\\lucene\\
 # 论文目录
-file_path: C:\\Users\\sjp\\Desktop\\source\\
+file_source_path: C:\\Users\\sjp\\Desktop\\source\\
+# 论文对比结果目录
+file_result_path: C:\\Users\\sjp\\Desktop\\result\\
 # 论文切割粒度
 text_length: 20

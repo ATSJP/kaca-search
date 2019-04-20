@@ -1,5 +1,7 @@
 package com.fast.kaca.search.web.config;
 
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -7,15 +9,15 @@ import org.springframework.stereotype.Component;
  * @author sys
  * @date 2019/4/15
  **/
+@Data
+@EqualsAndHashCode()
 @Component
 public class ConfigProperties {
+    /**
+     * 系统环境 dev 开发环境 prod 生产环境
+     */
     @Value("${spring.profiles.active}")
     private String env;
-    /**
-     * 论文保存路径
-     */
-    @Value("${file_path}")
-    private String fileDir;
     /**
      * Lucene索引文件路径
      */
@@ -24,22 +26,16 @@ public class ConfigProperties {
     /**
      * 论文保存路径
      */
+    @Value("${file_source_path}")
+    private String fileSourceDir;
+    /**
+     * 论文处理结果路径
+     */
+    @Value("${file_result_path}")
+    private String fileResultDir;
+    /**
+     * 论文切割粒度
+     */
     @Value("${text_length}")
     private Integer textLength;
-
-    public String getEnv() {
-        return env;
-    }
-
-    public String getFileDir() {
-        return fileDir;
-    }
-
-    public String getIndexDir() {
-        return indexDir;
-    }
-
-    public Integer getTextLength() {
-        return textLength;
-    }
 }

@@ -5,6 +5,10 @@ package com.fast.kaca.search.web.constant;
  * @date 2019/4/17
  **/
 public interface ConstantSystem {
+    /**
+     * 1.0版本产生的对比结果
+     */
+    String VERSION = "VERSION_1.0";
 
     enum ENV {
         /**
@@ -23,5 +27,4 @@ public interface ConstantSystem {
             return desc;
         }
     }
-
 }

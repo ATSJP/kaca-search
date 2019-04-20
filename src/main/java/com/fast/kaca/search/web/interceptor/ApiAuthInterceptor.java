@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
+ * 权限认证
+ *
  * @author sys
  * @date 2019/4/16
  **/
@@ -28,7 +30,7 @@ public class ApiAuthInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object object) throws Exception {
-        // TODO 此方式 黑客可以通过修改uid，而绕过校验，应提供时间等参数，从前端待会，后台md5 对比 token，token随时间偏移
+        // TODO 此方式 黑客可以通过修改uid，而绕过校验，应提供时间等参数，从前端带入，后台md5 对比 token，token随时间偏移
         String uid = request.getParameter("uid");
         String token = request.getParameter("token");
         if (StringUtils.isEmpty(uid) || StringUtils.isEmpty(token)) {
