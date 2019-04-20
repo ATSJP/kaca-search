@@ -5,6 +5,7 @@ import com.fast.kaca.search.web.utils.WordUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 
@@ -39,6 +40,11 @@ public class KacaSearchApplicationTests {
         searchService.createIndex();
         long end = System.currentTimeMillis();
         System.out.println("time:" + (end - start));
+    }
+
+    @Test
+    public void testClasszz() {
+        boolean isSupports = new ByteArrayHttpMessageConverter().supports(byte[].class);
     }
 
 }
