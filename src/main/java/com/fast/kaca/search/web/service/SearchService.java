@@ -3,7 +3,9 @@ package com.fast.kaca.search.web.service;
 import com.fast.kaca.search.web.config.ConfigProperties;
 import com.fast.kaca.search.web.constant.ConstantApi;
 import com.fast.kaca.search.web.dao.FileDao;
+import com.fast.kaca.search.web.dao.UserDao;
 import com.fast.kaca.search.web.entity.FileEntity;
+import com.fast.kaca.search.web.entity.UserEntity;
 import com.fast.kaca.search.web.request.FileRequest;
 import com.fast.kaca.search.web.request.SearchRequest;
 import com.fast.kaca.search.web.response.FileResponse;
@@ -33,7 +35,7 @@ import org.apache.lucene.util.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -66,6 +68,8 @@ public class SearchService {
     private LuceneTool luceneTool;
     @Resource
     private FileDao fileDao;
+    @Resource
+    private UserDao userDao;
 
     /**
      * 跑所有文章的索引(仅首次没有任何索引时需要，其余增量索引)
@@ -256,20 +260,20 @@ public class SearchService {
 
     public void fileList(SearchRequest request, SearchResponse response) {
         // 获取文件list: 0 拿自己的 1 获取库文件
-        Short isListAll = request.getIsListAll();
-        if (isListAll == null) {
+        Short isListType = request.getIsListType();
+        if (isListType == null) {
             response.setCode(ConstantApi.CODE.PARAM_NULL.getCode());
             response.setMsg(ConstantApi.CODE.PARAM_NULL.getDesc());
             return;
         }
-        boolean isListAllTrue = ConstantApi.FILE_LIST_TYPE.ALL.getCode().equals(isListAll);
+        boolean isListAllTrue = ConstantApi.FILE_LIST_TYPE.ALL.getCode().equals(isListType);
         if (isListAllTrue) {
             // 拿取库文件
             List<FileVo> fileVoList = this.getAllUserFileList();
             this.assembleFileListResponse(response, fileVoList);
             return;
         }
-        boolean isListSelfTrue = ConstantApi.FILE_LIST_TYPE.SELF.getCode().equals(isListAll);
+        boolean isListSelfTrue = ConstantApi.FILE_LIST_TYPE.SELF.getCode().equals(isListType);
         if (isListSelfTrue) {
             // 拿取此用户的文件
             List<FileVo> fileVoList = this.getCurrentUserFileList(request.getUid());
@@ -315,10 +319,16 @@ public class SearchService {
                 // 下载处理好的文件
                 filePath = configProperties.getFileResultDir() + fileName;
             }
-            FileSystemResource file = new FileSystemResource(filePath);
-            response.setFileSystemResource(file);
+            ByteArrayResource byteArrayResource = null;
+            try {
+                byteArrayResource = new ByteArrayResource(FileUtils.toByteArrayNIO(filePath));
+            } catch (IOException e) {
+                logger.error("read file error->fileId:{},isSource:{}", fileId, isSource);
+            }
+            response.setByteArrayResource(byteArrayResource);
+            response.setFileName(fileName);
         }
-        if (response.getFileSystemResource() == null || !response.getFileSystemResource().exists()) {
+        if (response.getByteArrayResource() == null || !response.getByteArrayResource().exists()) {
             response.setCode(ConstantApi.CODE.FAIL.getCode());
             response.setMsg(ConstantApi.FILE_DOWNLOAD.FAIL.getDesc());
         }
@@ -357,6 +367,12 @@ public class SearchService {
         fileEntityList.forEach(item -> {
             FileVo fileVo = new FileVo();
             BeanUtils.copyProperties(item, fileVo);
+            Optional<UserEntity> userEntityOptional = userDao.findById(item.getCreateId());
+            if (userEntityOptional.isPresent()) {
+                UserEntity userEntity = userEntityOptional.get();
+                String userName = userEntity.getUserName();
+                fileVo.setCreateName(userName.substring(0, 1) + "***");
+            }
             fileVoList.add(fileVo);
         });
         return fileVoList;

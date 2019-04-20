@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.sql.Timestamp;
 
 /**
  * @author sys
@@ -20,4 +21,12 @@ public class FileVo implements Serializable {
      * 文件名称
      */
     private String fileName;
+    /**
+     * 上传作者
+     */
+    private String createName;
+    /**
+     * 上传时间
+     */
+    private Timestamp createTime;
 }

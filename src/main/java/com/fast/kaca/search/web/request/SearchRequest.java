@@ -18,7 +18,7 @@ public class SearchRequest extends BaseRequest {
     /**
      * 获取文件list: 0 拿自己的 1 获取库文件
      */
-    private Short isListAll;
+    private Short isListType;
     /**
      * 上传的文件
      */

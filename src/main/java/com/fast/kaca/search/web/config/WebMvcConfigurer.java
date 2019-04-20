@@ -2,11 +2,14 @@ package com.fast.kaca.search.web.config;
 
 import com.fast.kaca.search.web.interceptor.ApiAuthInterceptor;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * web拦截器等配置
@@ -43,4 +46,8 @@ public class WebMvcConfigurer extends WebMvcConfigurationSupport {
         super.addInterceptors(registry);
     }
 
+    @Override
+    public void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
+        converters.add(0,new ByteArrayHttpMessageConverter());
+    }
 }

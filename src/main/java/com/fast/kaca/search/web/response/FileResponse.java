@@ -2,7 +2,7 @@ package com.fast.kaca.search.web.response;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.ByteArrayResource;
 
 /**
  * @author sjp
@@ -11,5 +11,6 @@ import org.springframework.core.io.FileSystemResource;
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class FileResponse extends BaseResponse {
-    private FileSystemResource fileSystemResource;
+    private String fileName;
+    private ByteArrayResource byteArrayResource;
 }
