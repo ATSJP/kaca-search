@@ -1,7 +1,7 @@
 server:
   port: 8081
   tomcat:
-    max-threads: 1000
+    max-threads: 400
     min-spare-threads: 10
     uri-encoding: UTF-8
 
@@ -36,12 +36,12 @@ spring:
   redis:
     host: 127.0.0.1
     port: 6379
-    #    password: redis@SJP
+    #    password: redis
     jedis:
       pool:
-        max-active: 100
-        max-idle: 100
-        min-idle: 10
+        max-active: 50
+        max-idle: 20
+        min-idle: 5
         max-wait: 6000
 
   #解决乱码问题

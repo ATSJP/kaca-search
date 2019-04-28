@@ -154,7 +154,6 @@ public class SearchService {
      *
      * @param request  req
      * @param response res
-     * @throws Exception 异常
      */
     public void search(SearchRequest request, SearchResponse response) {
         String key = request.getKey();
@@ -207,9 +206,6 @@ public class SearchService {
         // 此篇文章入库,建立索引
         this.initIndexTask(request);
     }
-
-
-
 
     /**
      * 已上传文件list
