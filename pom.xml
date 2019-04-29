@@ -23,6 +23,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
 
+        <ikanalyzer.version>2012_u6</ikanalyzer.version>
         <lunece.version>4.10.2</lunece.version>
         <fastJson.version>1.2.47</fastJson.version>
         <druid.version>1.0.29</druid.version>
@@ -60,7 +61,7 @@
         <dependency>
             <groupId>com.janeluo</groupId>
             <artifactId>ikanalyzer</artifactId>
-            <version>2012_u6</version>
+            <version>${ikanalyzer.version}</version>
         </dependency>
         <!-- lucene依赖 -->
         <!-- lucene核心库 -->
@@ -109,6 +110,7 @@
             <artifactId>guava</artifactId>
             <version>24.0-jre</version>
         </dependency>
+        <!-- POI -->
         <dependency>
             <groupId>org.apache.poi</groupId>
             <artifactId>poi-scratchpad</artifactId>
