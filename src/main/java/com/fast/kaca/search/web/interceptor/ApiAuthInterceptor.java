@@ -3,7 +3,7 @@ package com.fast.kaca.search.web.interceptor;
 import com.alibaba.fastjson.JSONObject;
 import com.fast.kaca.search.web.constant.ConstantApi;
 import com.fast.kaca.search.web.response.BaseResponse;
-import com.fast.kaca.search.web.utils.RedissonTools;
+import com.fast.kaca.search.web.utils.JedisTools;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -23,7 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ApiAuthInterceptor implements HandlerInterceptor {
 
     @Resource
-    private RedissonTools redissonTools;
+    private JedisTools jedisTools;
 
     /**
      * 在请求处理之前进行调用（Controller方法调用之前）
@@ -41,7 +41,7 @@ public class ApiAuthInterceptor implements HandlerInterceptor {
             response.getWriter().write(JSONObject.toJSONString(baseResponse));
             return false;
         }
-        String token1 = redissonTools.get("token-" + uid);
+        String token1 = jedisTools.get("token-" + uid);
         if (!token.equals(token1)) {
             BaseResponse baseResponse = new BaseResponse();
             baseResponse.setCode(ConstantApi.CODE.TOKEN_INVALID.getCode());

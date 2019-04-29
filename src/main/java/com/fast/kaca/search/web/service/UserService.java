@@ -6,7 +6,7 @@ import com.fast.kaca.search.web.dao.UserDao;
 import com.fast.kaca.search.web.entity.UserEntity;
 import com.fast.kaca.search.web.request.LoginRequest;
 import com.fast.kaca.search.web.response.LoginResponse;
-import com.fast.kaca.search.web.utils.RedissonTools;
+import com.fast.kaca.search.web.utils.JedisTools;
 import com.fast.kaca.search.web.utils.TokenGenerate;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,7 @@ public class UserService {
     @Resource
     private UserDao userDao;
     @Resource
-    private RedissonTools redissonTools;
+    private JedisTools jedisTools;
 
     /**
      * 登陆
@@ -46,7 +46,7 @@ public class UserService {
         }
         // 生成token
         String token = TokenGenerate.getToken(userName, password);
-        redissonTools.set("token-" + userEntity.getId(), token, ConstantCache.LOGIN_TOKEN_TIME_OUT);
+        jedisTools.set("token-" + userEntity.getId(), token, ConstantCache.LOGIN_TOKEN_TIME_OUT);
         response.setUid(userEntity.getId());
         response.setToken(token);
         response.setCode(ConstantApi.CODE.SUCCESS.getCode());
@@ -60,7 +60,7 @@ public class UserService {
      * @param response res
      */
     public void logout(LoginRequest request, LoginResponse response) {
-        redissonTools.delete("token-" + request.getUid());
+        jedisTools.delete("token-" + request.getUid());
         response.setCode(ConstantApi.CODE.SUCCESS.getCode());
         response.setMsg(ConstantApi.CODE.SUCCESS.getDesc());
     }
@@ -88,7 +88,7 @@ public class UserService {
         userDao.save(userEntity);
         // 生成token
         String token = TokenGenerate.getToken(userName, password);
-        redissonTools.set("token-" + userEntity.getId(), token, ConstantCache.LOGIN_TOKEN_TIME_OUT);
+        jedisTools.set("token-" + userEntity.getId(), token, ConstantCache.LOGIN_TOKEN_TIME_OUT);
         response.setToken(token);
         response.setUid(userEntity.getId());
         response.setCode(ConstantApi.CODE.SUCCESS.getCode());
