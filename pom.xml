@@ -28,6 +28,7 @@
         <fastJson.version>1.2.47</fastJson.version>
         <druid.version>1.0.29</druid.version>
         <mysql.version>8.0.13</mysql.version>
+        <commons.io.version>2.5</commons.io.version>
 
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
     </properties>
@@ -140,6 +141,11 @@
         <dependency>
             <groupId>redis.clients</groupId>
             <artifactId>jedis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons.io.version}</version>
         </dependency>
     </dependencies>
 

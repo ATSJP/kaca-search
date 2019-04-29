@@ -13,24 +13,26 @@ import com.fast.kaca.search.web.response.FileResponse;
 import com.fast.kaca.search.web.response.SearchResponse;
 import com.fast.kaca.search.web.utils.FileUtils;
 import com.fast.kaca.search.web.utils.LuceneTool;
+import com.fast.kaca.search.web.utils.StringHelpUtils;
 import com.fast.kaca.search.web.utils.WordUtils;
 import com.fast.kaca.search.web.vo.FileVo;
 import com.fast.kaca.search.web.vo.SearchVo;
 import com.google.common.base.Splitter;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.apache.commons.io.IOUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -39,6 +41,8 @@ import java.sql.Timestamp;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * @author sys
@@ -262,31 +266,64 @@ public class SearchService {
     public void download(FileRequest request, FileResponse response) {
         Integer fileId = request.getFileId();
         Short isSource = request.getIsSource();
-        boolean isSourceTrue = ConstantApi.IS_TRUE.TRUE.getCode().equals(isSource);
         Optional<FileEntity> fileEntityOptional = fileDao.findById(fileId);
         if (fileEntityOptional.isPresent()) {
             String fileName = fileEntityOptional.get().getFileName();
-            String filePath;
-            if (isSourceTrue) {
-                // 下载源文件
-                filePath = configProperties.getFileSourceDir() + fileName;
-            } else {
-                // 下载处理好的文件
-                filePath = configProperties.getFileResultDir() + ConstantSystem.VERSION + fileName;
-            }
-            ByteArrayResource byteArrayResource = null;
+            String filePath = this.getFilePathByFileNameAndIsSource(isSource, fileName);
+            byte[] content;
             try {
-                byteArrayResource = new ByteArrayResource(FileUtils.toByteArrayNIO(filePath));
+                content = FileUtils.getContent(filePath);
             } catch (IOException e) {
-                logger.error("read file error->fileId:{},isSource:{},e:{}", fileId, isSource, e);
+                logger.info("get file content error->fileId:{},isSource:{},e:{}", fileId, isSource, e);
+                response.setCode(ConstantApi.CODE.FAIL.getCode());
+                response.setMsg(ConstantApi.FILE_DOWNLOAD.FAIL.getDesc());
+                return;
             }
-            response.setByteArrayResource(byteArrayResource);
-            response.setFileName(fileName);
+            if (content == null) {
+                logger.info("get file error,byte is empty->fileId:{},isSource:{}", fileId, isSource);
+                response.setCode(ConstantApi.CODE.FAIL.getCode());
+                response.setMsg(ConstantApi.FILE_DOWNLOAD.FAIL.getDesc());
+                return;
+            }
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            ZipOutputStream zip = new ZipOutputStream(byteArrayOutputStream);
+            try {
+                zip.putNextEntry(new ZipEntry(fileName));
+                IOUtils.write(content, zip);
+            } catch (IOException e) {
+                logger.info("get file error,byte is empty->fileId:{},isSource:{},e:{}", fileId, isSource, e);
+            } finally {
+                try {
+                    zip.closeEntry();
+                } catch (IOException e) {
+                    logger.info("close zip error->fileId:{},isSource:{},e:{}", fileId, isSource, e);
+                }
+            }
+            response.setByteArrayOutputStream(byteArrayOutputStream);
+            response.setFileName(StringHelpUtils.removeSuffix(fileName));
         }
-        if (response.getByteArrayResource() == null || !response.getByteArrayResource().exists()) {
-            response.setCode(ConstantApi.CODE.FAIL.getCode());
-            response.setMsg(ConstantApi.FILE_DOWNLOAD.FAIL.getDesc());
+    }
+
+
+
+    /**
+     * 获取文件路径
+     *
+     * @param isSource 是否拿取原文件 0 否(获取查重后的文件) 1 是
+     * @param fileName 文件全名
+     * @return 文件路径
+     */
+    private String getFilePathByFileNameAndIsSource(Short isSource, String fileName) {
+        String filePath;
+        boolean isSourceTrue = ConstantApi.IS_TRUE.TRUE.getCode().equals(isSource);
+        if (isSourceTrue) {
+            // 下载源文件
+            filePath = configProperties.getFileSourceDir() + fileName;
+        } else {
+            // 下载处理好的文件
+            filePath = configProperties.getFileResultDir() + ConstantSystem.VERSION + fileName;
         }
+        return filePath;
     }
 
     /**
