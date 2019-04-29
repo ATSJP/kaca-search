@@ -278,7 +278,7 @@ public class SearchService {
             try {
                 byteArrayResource = new ByteArrayResource(FileUtils.toByteArrayNIO(filePath));
             } catch (IOException e) {
-                logger.error("read file error->fileId:{},isSource:{}", fileId, isSource);
+                logger.error("read file error->fileId:{},isSource:{},e:{}", fileId, isSource, e);
             }
             response.setByteArrayResource(byteArrayResource);
             response.setFileName(fileName);
