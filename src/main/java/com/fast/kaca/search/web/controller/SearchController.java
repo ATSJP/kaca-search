@@ -73,6 +73,19 @@ public class SearchController {
         return response;
     }
 
+    @ApiOperation(value = "获取已上传的文件", notes = "获取已上传的文件")
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),
+            @ApiImplicitParam(name = "token", value = "token", required = true, dataType = "String"),
+            @ApiImplicitParam(name = "fileId", value = "文件id", required = true, dataType = "Number")
+    })
+    @GetMapping("/getFile")
+    public SearchResponse getFile(SearchRequest request) {
+        SearchResponse response = new SearchResponse();
+        searchService.getFile(request, response);
+        return response;
+    }
+
     @ApiOperation(value = "上传文件", notes = "上传文件")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "uid", value = "用户唯一id", required = true, dataType = "Number"),

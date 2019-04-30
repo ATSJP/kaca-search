@@ -23,4 +23,8 @@ public class SearchRequest extends BaseRequest {
      * 上传的文件
      */
     private MultipartFile[] files;
+    /**
+     * 文件id
+     */
+    private Integer fileId;
 }

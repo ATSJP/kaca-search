@@ -171,6 +171,7 @@ public class SearchService {
      * @param request  req
      * @param response res
      */
+    @SuppressWarnings("all")
     public void upload(SearchRequest request, SearchResponse response) {
         // Get file name
         MultipartFile[] files = request.getFiles();
@@ -183,11 +184,17 @@ public class SearchService {
         }
         Arrays.asList(files).forEach(item -> {
             if (!item.isEmpty()) {
+                String fileName = item.getOriginalFilename();
+                // 是否含有同名文件
+                List<FileEntity> fileEntityList = fileDao.findAllByFileName(item.getOriginalFilename());
+                if (!CollectionUtils.isEmpty(fileEntityList)) {
+                    fileName = System.currentTimeMillis() + "_" + item.getOriginalFilename();
+                }
                 boolean isSaveFileSuccess = false;
                 // 保存文件
                 try {
                     byte[] bytes = item.getBytes();
-                    Path path = Paths.get(configProperties.getFileSourceDir() + item.getOriginalFilename());
+                    Path path = Paths.get(configProperties.getFileSourceDir() + fileName);
                     Files.write(path, bytes);
                     isSaveFileSuccess = true;
                 } catch (Exception e) {
@@ -196,14 +203,15 @@ public class SearchService {
                 if (isSaveFileSuccess) {
                     // 保存上传文件记录
                     FileEntity fileEntity = new FileEntity();
-                    fileEntity.setFileName(item.getOriginalFilename());
+                    fileEntity.setFileName(fileName);
                     fileEntity.setCreateId(request.getUid());
                     fileEntity.setCreateTime(new Timestamp(System.currentTimeMillis()));
                     fileEntity.setUpdateId(request.getUid());
                     fileEntity.setUpdateTime(new Timestamp(System.currentTimeMillis()));
                     fileDao.save(fileEntity);
                     // 论文查重-建立查重文件
-                    checkRepeatService.startCheckRepeatTask(item.getOriginalFilename());
+                    checkRepeatService.startCheckRepeatTask(fileName);
+                    response.setData(fileEntity.getId());
                 }
             }
         });
@@ -305,7 +313,6 @@ public class SearchService {
     }
 
 
-
     /**
      * 获取文件路径
      *
@@ -370,4 +377,19 @@ public class SearchService {
         return fileVoList;
     }
 
+    public void getFile(SearchRequest request, SearchResponse response) {
+        Integer fileId = request.getFileId();
+        if (fileId == null) {
+            response.setCode(ConstantApi.CODE.PARAM_NULL.getCode());
+            response.setMsg(ConstantApi.CODE.PARAM_NULL.getDesc());
+            return;
+        }
+        Optional<FileEntity> fileEntityOptional = fileDao.findById(fileId);
+        if (fileEntityOptional.isPresent()) {
+            FileEntity entity = fileEntityOptional.get();
+            if (request.getUid().equals(entity.getCreateId())) {
+                response.setData(entity);
+            }
+        }
+    }
 }

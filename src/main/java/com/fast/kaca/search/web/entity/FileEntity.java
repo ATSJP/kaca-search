@@ -13,6 +13,7 @@ import java.util.Objects;
 public class FileEntity {
     private int id;
     private String fileName;
+    private String percent;
     private Integer createId;
     private Timestamp createTime;
     private Integer updateId;
@@ -20,6 +21,7 @@ public class FileEntity {
 
     @Id
     @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }
@@ -36,6 +38,16 @@ public class FileEntity {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    @Basic
+    @Column(name = "percent")
+    public String getPercent() {
+        return percent;
+    }
+
+    public void setPercent(String percent) {
+        this.percent = percent;
     }
 
     @Basic

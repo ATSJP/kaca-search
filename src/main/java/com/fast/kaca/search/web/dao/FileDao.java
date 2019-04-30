@@ -20,4 +20,6 @@ public interface FileDao extends CrudRepository<FileEntity, Integer> {
      * @return 文件list
      */
     List<FileEntity> findAllByCreateId(Integer createId);
+
+    List<FileEntity> findAllByFileName(String fileName);
 }
