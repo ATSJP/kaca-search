@@ -18,17 +18,21 @@ public class JedisTools {
 
     public String get(String name) {
         Jedis jedis = jedisPool.getResource();
-        return jedis.get(name);
+        String value = jedis.get(name);
+        jedis.close();
+        return value;
     }
 
     public void set(String name, String value, int expiredSeconds) {
         Jedis jedis = jedisPool.getResource();
         jedis.setex(name, expiredSeconds, value);
+        jedis.close();
     }
 
     public void delete(String name) {
         Jedis jedis = jedisPool.getResource();
         jedis.del(name);
+        jedis.close();
     }
 
 }
