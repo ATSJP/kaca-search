@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.ByteArrayOutputStream;
@@ -122,7 +123,9 @@ public class SearchController {
                         "attachment; filename=\"" + fileName + ".zip\"");
                 res.addHeader("Content-Length", "" + data.length);
                 res.setContentType("application/octet-stream; charset=UTF-8");
-                IOUtils.write(data, res.getOutputStream());
+                ServletOutputStream servletOutputStream = res.getOutputStream();
+                IOUtils.write(data,servletOutputStream);
+                servletOutputStream.close();
             }
         }
     }
