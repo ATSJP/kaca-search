@@ -27,7 +27,7 @@
         <lunece.version>4.10.2</lunece.version>
         <fastJson.version>1.2.47</fastJson.version>
         <druid.version>1.0.29</druid.version>
-        <mysql.version>8.0.13</mysql.version>
+        <mysql.version>8.0.16</mysql.version>
         <commons.io.version>2.5</commons.io.version>
 
         <maven.compiler.plugin.version>3.1</maven.compiler.plugin.version>
